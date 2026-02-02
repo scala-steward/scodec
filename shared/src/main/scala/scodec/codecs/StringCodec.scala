@@ -46,7 +46,7 @@ private[codecs] final class StringCodec(charset: Charset) extends Codec[String]:
     val buffer = CharBuffer.wrap(str).nn
     try Attempt.successful(BitVector(encoder.encode(buffer).nn))
     catch
-      case (_: MalformedInputException | _: UnmappableCharacterException) =>
+      case _: MalformedInputException | _: UnmappableCharacterException =>
         Attempt.failure(
           Err(s"${charset.displayName} cannot encode character '${buffer.charAt(0)}'")
         )
@@ -57,7 +57,7 @@ private[codecs] final class StringCodec(charset: Charset) extends Codec[String]:
       val asBuffer = ByteBuffer.wrap(buffer.toByteArray)
       Attempt.successful(DecodeResult(decoder.decode(asBuffer).toString, BitVector.empty))
     catch
-      case (_: MalformedInputException | _: UnmappableCharacterException) =>
+      case _: MalformedInputException | _: UnmappableCharacterException =>
         Attempt.failure(
           Err(s"${charset.displayName} cannot decode string from '0x${buffer.toByteVector.toHex}'")
         )
